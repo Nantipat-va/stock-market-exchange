@@ -52,10 +52,14 @@ fs.createReadStream('./listedCompanies_th_TH.csv')
     objects.push(row)
   })
   .on('end', () => {
-    console.log(objects)
+    // console.log(objects)
+    console.log("CSV โหลดเสร็จแล้ว:", objects.length, "แถว");
   })
 
 app.get('/',(req, res) =>{
+  if (objects.length === 0 ) {
+    console.log("Warning: ไม่มีข้อมูลใน objects!");
+  }
   res.render('companiesList', {data: objects})
 })
 
@@ -64,7 +68,7 @@ app.post('/api/insert',(req, res) =>{
   let {category_name} = req.body;
   let query = "INSERT INTO category(category_name) VALUES(?)";
 
-  db.query = (query, [category_name], (err, results) => {
+  db.query(query, [category_name], (err, results) => {
     if(err){
       console.error("Error");
       return res.status(500).json({errro: "Internal server error"});
