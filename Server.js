@@ -32,29 +32,41 @@ db.connect((error) => {
 
 //Convert CSV File to Object
 let objects = [];
+function loadCSV(){
+  return new Promise((resolve, reject) =>{
+    fs.createReadStream('./listedCompanies_th_TH.csv')
+    .pipe(csv({header: false}))
+    .on('data', (data) => {
+      const values = (Object.values(data));
+      let row = {
+        postcode: values[0],
+        stock: values[1],
+        name: values[2],
+        market: values[3],
+        industry: values[4],
+        category: values[5],
+        address: values[6],
+        tel: values[7],
+        fax: values[8],
+        website: values[9]
+      }
+      objects.push(row)
+    })
+    .on('end', () => {
+      // console.log(objects)
+      console.log("CSV loaded:", objects.length, "row");
+      resolve(objects);
+    })
+    .on("error", (err) => reject(err));
+  })
+}
 
-fs.createReadStream('./listedCompanies_th_TH.csv')
-  .pipe(csv({header: false}))
-  .on('data', (data) => {
-    const values = (Object.values(data));
-    let row = {
-      postcode: values[0],
-      stock: values[1],
-      name: values[2],
-      market: values[3],
-      industry: values[4],
-      category: values[5],
-      address: values[6],
-      tel: values[7],
-      fax: values[8],
-      website: values[9]
-    }
-    objects.push(row)
-  })
-  .on('end', () => {
-    // console.log(objects)
-    console.log("CSV โหลดเสร็จแล้ว:", objects.length, "แถว");
-  })
+loadCSV().then((data) => {
+  objects = data;
+  // console.log(objects);
+  console.log("Data ready to use");
+});
+
 
 app.get('/',(req, res) =>{
   if (objects.length === 0 ) {

@@ -14,8 +14,8 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () =>{
-            const lists = <%- JSON.stringify(data)%>;
-
+            const lists =  JSON.stringify(<%-data%>);
+            console.log(<%=data%>)
             new gridjs.Grid({
                 columns: ["หลักทรัพย์", "บริษัท", "ตลาด", "กลุ่มอุตสาหกรรม", "หมวดธุรกิจ", "ที่อยู่", "รหัสไปรษณีย์", "โทรศัพท์", "โทรสาร", "เว๊บไซต์"],
                 data:  lists,
