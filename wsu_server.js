@@ -5,7 +5,13 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 const iconv = require('iconv-lite');
 
-async function downloadExcelFile(url, filePath) {
+const app = express();
+const server = http.createServer(app);
+const PORT = 3000;
+
+app.use(express.static(__dirname + '/pubilc'));
+
+const downloadExcelFile = async (url, filePath) => {
     const response = await axios({
         method: 'get',
         url: url,
@@ -18,7 +24,7 @@ async function downloadExcelFile(url, filePath) {
 }
 
 // Function to convert Excel to CSV
-function convertExcelToCSV(inputFilePath, outputFilePath) {
+const convertExcelToCSV = (inputFilePath, outputFilePath) => {
    
     const xlsData = fs.readFileSync(inputFilePath);
 
@@ -38,6 +44,8 @@ function convertExcelToCSV(inputFilePath, outputFilePath) {
     fs.writeFileSync(outputFilePath, csvData);
     console.log('Excel file converted to CSV!');
 }
+
+
 
 // Main execution
 (async () => {
