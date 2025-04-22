@@ -31,8 +31,9 @@ db.connect((error) => {
 })
 
 //Convert CSV File to Object
-let objects = [];
-function loadCSV(){
+async function loadCSV(){
+  let objects = [];
+
   return new Promise((resolve, reject) =>{
     fs.createReadStream('./listedCompanies_th_TH.csv')
     .pipe(csv({header: false}))
@@ -53,20 +54,27 @@ function loadCSV(){
       objects.push(row)
     })
     .on('end', () => {
-      // console.log(objects)
+      console.log(objects)
       console.log("CSV loaded:", objects.length, "row");
       resolve(objects);
     })
     .on("error", (err) => reject(err));
   })
 }
+//await loadCSV and run server
+(async () => {
+  try {
+    objects = await loadCSV();
+    console.log("Data ready to use");
 
-loadCSV().then((data) => {
-  objects = data;
-  // console.log(objects);
-  console.log("Data ready to use");
-});
+    server.listen(PORT, ()=>{
+      console.log(`Server running on port ${PORT}`);
+    })
 
+  } catch (err) {
+    console.error("Error loading CSV:", err);
+  }
+})();
 
 app.get('/',(req, res) =>{
   if (objects.length === 0 ) {
@@ -74,6 +82,7 @@ app.get('/',(req, res) =>{
   }
   res.render('companiesList', {data: objects})
 })
+
 
 // Insert data to database
 app.post('/api/insert',(req, res) =>{
@@ -89,6 +98,3 @@ app.post('/api/insert',(req, res) =>{
   })
 })
 
-server.listen(PORT, ()=>{
-  console.log(`Server running on port ${PORT}`);
-})
