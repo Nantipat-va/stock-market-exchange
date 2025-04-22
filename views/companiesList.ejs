@@ -14,10 +14,22 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () =>{
-            const lists =  JSON.stringify(<%-data%>);
-            console.log(<%=data%>)
+            const lists = <%-JSON.stringify(data)%>;
+            console.log(lists);
             new gridjs.Grid({
-                columns: ["หลักทรัพย์", "บริษัท", "ตลาด", "กลุ่มอุตสาหกรรม", "หมวดธุรกิจ", "ที่อยู่", "รหัสไปรษณีย์", "โทรศัพท์", "โทรสาร", "เว๊บไซต์"],
+                // columns: ["หลักทรัพย์", "บริษัท", "ตลาด", "กลุ่มอุตสาหกรรม", "หมวดธุรกิจ", "ที่อยู่", "รหัสไปรษณีย์", "โทรศัพท์", "โทรสาร", "เว๊บไซต์"],
+                columns: [
+                    {id: "stock", name: "หุ้น"}, 
+                    {id: "name", name: "บริษัท"}, 
+                    {id: "market", name: "ตลาด"}, 
+                    {id: "industry", name: "อุสาหกรรม"}, 
+                    {id: "category", name: "หมวดธุรกิจ"}, 
+                    {id: "address", name: "ที่อยู่"}, 
+                    {id: "postcode", name: "รหัสไปรษณีย์"}, 
+                    {id: "tel", name: "โทรศัพท์"}, 
+                    {id: "fax", name: "โทรสาร"}, 
+                    {id: "website", name: "เว๊บไซต์"}, 
+                ],
                 data:  lists,
                 search: true,
                 pagination: {
@@ -28,5 +40,7 @@
         });
         
     </script>
+
+    
 </body>
 </html>
