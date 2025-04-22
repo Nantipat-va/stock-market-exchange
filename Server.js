@@ -54,13 +54,63 @@ async function loadCSV(){
       objects.push(row)
     })
     .on('end', () => {
-      console.log(objects)
+      // console.log(objects)
       console.log("CSV loaded:", objects.length, "row");
       resolve(objects);
     })
     .on("error", (err) => reject(err));
   })
 }
+
+async function getOrInsertId(table, column, value) {
+  return new Promise((resolve, reject) => {
+    db.query(`SELECT ${table}_id AS id FROM ${table} WHERE ${column} = ?`, [value], (err, results) => {
+      if (err) return reject(err);
+      if (results.length > 0) return resolve(results[0].id);
+
+      db.query(`INSERT INTO ${table} (${column}) VALUES (?)`, [value], (err, insertResult) => {
+        if (err) return reject(err);
+        resolve(insertResult.insertId);
+      });
+    });
+  });
+}
+
+app.post('/api/insert-all', async (req, res) => {
+  try {
+    for (const company of objects) {
+      const market_id = await getOrInsertId('market', 'market_name', company.market);
+      const industry_group_id = await getOrInsertId('industry_group', 'industry_name', company.industry);
+      const category_id = await getOrInsertId('category', 'category_name', company.category);
+
+      db.query(`
+        INSERT INTO company (stock, name, address, postcode, tel, fax, website, industry_group_id, category_id, market_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+        [
+          company.stock,
+          company.name,
+          company.address,
+          company.postcode,
+          company.tel,
+          company.fax,
+          company.website,
+          industry_group_id,
+          category_id,
+          market_id
+        ],
+        (err) => {
+          if (err) console.error("Insert error for", company.stock, ":", err);
+        }
+      );
+    }
+    res.json({ message: "All companies inserted successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Insert failed', error: err.message });
+  }
+});
+
 //await loadCSV and run server
 (async () => {
   try {
@@ -81,20 +131,5 @@ app.get('/',(req, res) =>{
     console.log("Warning: ไม่มีข้อมูลใน objects!");
   }
   res.render('companiesList', {data: objects})
-})
-
-
-// Insert data to database
-app.post('/api/insert',(req, res) =>{
-  let {category_name} = req.body;
-  let query = "INSERT INTO category(category_name) VALUES(?)";
-
-  db.query(query, [category_name], (err, results) => {
-    if(err){
-      console.error("Error");
-      return res.status(500).json({errro: "Internal server error"});
-    }
-    res.json({msg: "insert successfully", insertedId: results.insertId})
-  })
 })
 
