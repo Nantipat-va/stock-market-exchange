@@ -4,17 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    
+    <!-- <link rel="stylesheet" href="../CSS/index.css"> -->
+     <link rel="stylesheet" href="./CSS/index.css">
     <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet">
+
     
 </head>
 <body>
-  <h1>รายชื่อบริษัท</h1>
-    <div id="table"></div>
 
+    <button id="btn-price" type="submit">Price</button>
+    <button id="btn-holders" type="submit">Holders</button>
+    <div id="container-cmLists">
+        <h1>รายชื่อบริษัท</h1>
+        <div id="table"></div>
+    </div>
+
+    <p id="htmlContent"></p>
+    
+    <script src="./JS/button.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () =>{
-            const lists = <%-JSON.stringify(data)%>;
+            const lists = <%- JSON.stringify(data)%>;
+
             console.log(lists);
             new gridjs.Grid({
                 // columns: ["หลักทรัพย์", "บริษัท", "ตลาด", "กลุ่มอุตสาหกรรม", "หมวดธุรกิจ", "ที่อยู่", "รหัสไปรษณีย์", "โทรศัพท์", "โทรสาร", "เว๊บไซต์"],
@@ -36,7 +50,7 @@
                     limit: 7
                 }
             }).render(document.getElementById("table"));
-            console.log(lists);
+            // console.log(lists);
         });
         
     </script>

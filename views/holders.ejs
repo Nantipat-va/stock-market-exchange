@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>ผู้ถือหุ้นใหญ่ของ CPALL</h1>
+
+    <table border="1" cellspacing="0" cellpadding="8">
+    <thead>
+        <tr>
+        <th>ลำดับ</th>
+        <th>ชื่อผู้ถือหุ้น</th>
+        <th>จำนวนหุ้น</th>
+        <th>สัดส่วน (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% holders.forEach(h => { %>
+        <tr>
+            <td><%= h.rank %></td>
+            <td><%= h.name %></td>
+            <td><%= h.shares %></td>
+            <td><%= h.percent %></td>
+        </tr>
+        <% }) %>
+    </tbody>
+    </table>
+</body>
+</html>
